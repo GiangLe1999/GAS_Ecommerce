@@ -3,28 +3,23 @@ const express = require("express");
 const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 const app = express();
+require("dotenv").config();
 
 // Init middleware
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Init DB
+require("./dbs/init.mongodb");
+// const { checkOverload } = require("./helpers/check.connect");
+// checkOverload();
 
 // Handle error
 
 // Init routes
-app.use(
-  ("/test",
-  (req, res, next) => {
-    const strCompress = "Hello Giang";
-    return (
-      res
-        .status(200)
-        // String.Repeat(X) có chức năng lặp lại chuỗi X lần
-        .json({ message: "Welcome", metadata: strCompress.repeat(12000) })
-    );
-  })
-);
+app.use("", require("./routes"));
 
 module.exports = app;
