@@ -4,6 +4,7 @@ const StatusCode = {
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
+  NOTFOUND: 404,
   CONFLICT: 409,
 };
 
@@ -11,6 +12,7 @@ const ReasonStatusCode = {
   BAD_REQUEST: "Bad request error",
   UNAUTHORIZED: "Unauthorized",
   FORBIDDEN: "Forbidden error",
+  NOTFOUND: "Not found",
   CONFLICT: "Conflict error",
 };
 
@@ -23,10 +25,10 @@ class ErrorResponse extends Error {
   }
 }
 
-class ConflictRequestError extends ErrorResponse {
+class BadRequestError extends ErrorResponse {
   constructor(
-    message = ReasonStatusCode.CONFLICT,
-    statusCode = StatusCode.CONFLICT
+    message = ReasonStatusCode.BAD_REQUEST,
+    statusCode = StatusCode.BAD_REQUEST
   ) {
     super(message, statusCode);
   }
@@ -50,18 +52,28 @@ class ForbiddenRequestError extends ErrorResponse {
   }
 }
 
-class BadRequestError extends ErrorResponse {
+class NotFoundRequestError extends ErrorResponse {
   constructor(
-    message = ReasonStatusCode.BAD_REQUEST,
-    statusCode = StatusCode.BAD_REQUEST
+    message = ReasonStatusCode.NOTFOUND,
+    statusCode = StatusCode.NOTFOUND
+  ) {
+    super(message, statusCode);
+  }
+}
+
+class ConflictRequestError extends ErrorResponse {
+  constructor(
+    message = ReasonStatusCode.CONFLICT,
+    statusCode = StatusCode.CONFLICT
   ) {
     super(message, statusCode);
   }
 }
 
 module.exports = {
-  ConflictRequestError,
+  BadRequestError,
   UnauthorizedRequestError,
   ForbiddenRequestError,
-  BadRequestError,
+  NotFoundRequestError,
+  ConflictRequestError,
 };

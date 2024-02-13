@@ -42,7 +42,7 @@ class CREATED extends SuccessResponse {
     metadata,
   }) {
     super({ message, statusCode, reasonStatusCode, metadata });
-    this.options = options;
+    // this.options = options;
   }
 }
 

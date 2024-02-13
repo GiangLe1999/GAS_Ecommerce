@@ -1,8 +1,19 @@
 "use strict";
 
+const {
+  UnauthorizedRequestError,
+  NotFoundRequestError,
+} = require("../core/error.response");
+const asyncHandler = require("../helpers/asyncHandler");
 const ApiKeyService = require("../services/apiKey.service");
+const KeyTokenService = require("../services/keyToken.service");
+const JWT = require("jsonwebtoken");
 
-const HEADER = { API_KEY: "x-api-key", AUTHORIZATION: "authorization" };
+const HEADER = {
+  API_KEY: "x-api-key",
+  CLIENT_ID: "x-client-id",
+  AUTHORIZATION: "authorization",
+};
 
 const checkApiKey = async (req, res, next) => {
   try {
@@ -33,8 +44,6 @@ const checkPermission = (permission) => {
       return res.status(403).json({ message: "Permission Denied" });
     }
 
-    console.log("permissions::", req.objKey.permissions);
-
     const validPermissions = req.objKey.permissions.includes(permission);
     if (!validPermissions) {
       return res.status(403).json({ message: "Permission Denied" });
@@ -44,10 +53,40 @@ const checkPermission = (permission) => {
   };
 };
 
-const asyncHandler = (fn) => {
-  return (req, res, next) => {
-    fn(req, res, next).catch(next);
-  };
-};
+const checkAuthentication = asyncHandler(async (req, res, next) => {
+  // 1 - Check userId missing?
+  // 2 - Get accessToken
+  // 3 - Verify token
+  // 4 - Check user in DB
+  // 5 - Check keyStore with userId
+  // 6 - Return next()
 
-module.exports = { checkApiKey, checkPermission, asyncHandler };
+  // 1
+  const userId = req.headers[HEADER.CLIENT_ID];
+  if (!userId) throw new UnauthorizedRequestError("Error: Invalid request");
+
+  // 2
+  const keyStore = await KeyTokenService.findKeyTokenByUserId(userId);
+  if (!keyStore) throw new NotFoundRequestError("Error: Not found keyStore");
+
+  // 3
+  const accessToken = req.headers[HEADER.AUTHORIZATION];
+  if (!accessToken)
+    throw new UnauthorizedRequestError("Error: Invalid request");
+
+  // 4
+  try {
+    const decodedUser = JWT.verify(accessToken, keyStore.publicKey);
+    if (keyStore.user.toString() !== decodedUser.userId)
+      throw new UnauthorizedRequestError("Error: Invalid userId");
+
+    req.keyStore = keyStore;
+
+    // 5
+    return next();
+  } catch (error) {
+    throw error;
+  }
+});
+
+module.exports = { checkApiKey, checkPermission, checkAuthentication };

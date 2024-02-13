@@ -22,7 +22,7 @@ class KeyTokenService {
       const update = {
         publicKey,
         privateKey,
-        refreshUsedTokens: [],
+        usedRefreshTokens: [],
         refreshToken,
       };
       const options = { upsert: true, new: true };
@@ -36,6 +36,32 @@ class KeyTokenService {
     } catch (error) {
       return error;
     }
+  };
+
+  static findKeyTokenByUserId = async (userId) => {
+    return await keytokenModel.findOne({ user: userId }).lean();
+  };
+
+  static removeKeyTokenById = async (_id) => {
+    return await keytokenModel.deleteOne({
+      _id,
+    });
+  };
+
+  static removeKeyTokenByUserId = async (userId) => {
+    return await keytokenModel.deleteOne({
+      user: userId,
+    });
+  };
+
+  static findKeyTokenByUsedRefreshToken = async (refreshToken) => {
+    return await keytokenModel
+      .findOne({ usedRefreshTokens: refreshToken })
+      .lean();
+  };
+
+  static findKeyTokenByCurrentRefreshToken = async (refreshToken) => {
+    return await keytokenModel.findOne({ refreshToken });
   };
 }
 

@@ -4,7 +4,7 @@ const DOCUMENT_NAME = "Key";
 const COLLECTION_NAME = "Keys";
 
 // Declare the Schema of the Mongo model
-var keyTokenSchema = new Schema(
+const keyTokenSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -20,7 +20,7 @@ var keyTokenSchema = new Schema(
       required: true,
     },
     // Refresh used tokens sẽ dùng để detect những hacker đã sử dụng trái phép token
-    refreshUsedTokens: {
+    usedRefreshTokens: {
       type: Array,
       default: [],
     },
