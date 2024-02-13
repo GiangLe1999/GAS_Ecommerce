@@ -19,10 +19,15 @@ var keyTokenSchema = new Schema(
       type: String,
       required: true,
     },
-    // Refresh token sẽ dùng để detect những hacker đã sử dụng trái phép token
-    refreshToken: {
+    // Refresh used tokens sẽ dùng để detect những hacker đã sử dụng trái phép token
+    refreshUsedTokens: {
       type: Array,
       default: [],
+    },
+    // Refresh token hiện đang sử dụng
+    refreshToken: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true, collection: COLLECTION_NAME }

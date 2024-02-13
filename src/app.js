@@ -17,9 +17,25 @@ require("./dbs/init.mongodb");
 // const { checkOverload } = require("./helpers/check.connect");
 // checkOverload();
 
-// Handle error
-
 // Init routes
 app.use("", require("./routes"));
+
+// Handle error
+// Nếu request gửi tới route không được định nghĩa, tạo 1 Error và gửi xuống error middleware
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+
+// Error middleware
+app.use((error, req, res, next) => {
+  const statusCode = error.status || 500;
+  return res.status(statusCode).json({
+    status: "error",
+    code: statusCode,
+    message: error.message || "Internal Server Error",
+  });
+});
 
 module.exports = app;
