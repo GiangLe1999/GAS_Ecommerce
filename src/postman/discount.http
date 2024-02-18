@@ -1,0 +1,55 @@
+@url_dev=http://localhost:3000/v1/api/discount
+
+### Create discount code
+POST {{url_dev}}
+Content-Type: application/json
+x-api-key: 5c91714c9d3512c7c9bb6af5c167e9bea479de0df660a6b18f1b1ebb1e239b47f354bc06e6bba46c5d52a9cd029c6b4540826973428f1a4fd2443b1c07364933
+x-client-id: 65cc12b68ea7a6adaf34027c
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWNjMTJiNjhlYTdhNmFkYWYzNDAyN2MiLCJlbWFpbCI6ImxlZ2lhbmdibXQwMTBAZ21haWwuY29tIiwiaWF0IjoxNzA4MTMzODA5LCJleHAiOjE3MDgzMDY2MDl9.OOcyRgFTYHs8e9O8UeF6rRtdlBGKEbbL9hGsQ_7F_lw
+
+{
+      "code" : "SHOP-1122",
+      "start_date": "2024-02-17 20:00:00", 
+      "end_date": "2024-02-23 12:00:00",
+      "min_order_value": 200000,
+      "product_ids": ["65d00fe79e18b9de29fe42f4"],
+      "applies_to" : "all",
+      "name":"name fixed amount",
+      "description": "description",
+      "type" : "percentage",
+      "value": 30,
+      "max_value": 30000,
+      "left_count": 100,
+      "used_count": 0,
+      "used_by": [],
+      "max_uses_per_user": 1,
+      "is_active": true
+}
+
+### Get all products with discount code
+GET {{url_dev}}/discount_with_products?code=SHOP-1133&shopId=65cc12b68ea7a6adaf34027c&limit=50&page=1
+Content-Type: application/json
+x-api-key: 5c91714c9d3512c7c9bb6af5c167e9bea479de0df660a6b18f1b1ebb1e239b47f354bc06e6bba46c5d52a9cd029c6b4540826973428f1a4fd2443b1c07364933
+
+### Get all discount code by shop
+GET {{url_dev}}?limit=50&page=1
+Content-Type: application/json
+x-api-key: 5c91714c9d3512c7c9bb6af5c167e9bea479de0df660a6b18f1b1ebb1e239b47f354bc06e6bba46c5d52a9cd029c6b4540826973428f1a4fd2443b1c07364933
+x-client-id: 65cc12b68ea7a6adaf34027c
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWNjMTJiNjhlYTdhNmFkYWYzNDAyN2MiLCJlbWFpbCI6ImxlZ2lhbmdibXQwMTBAZ21haWwuY29tIiwiaWF0IjoxNzA4MTMzODA5LCJleHAiOjE3MDgzMDY2MDl9.OOcyRgFTYHs8e9O8UeF6rRtdlBGKEbbL9hGsQ_7F_lw
+
+### Get discount amount
+POST {{url_dev}}/amount
+Content-Type: application/json
+x-api-key: 5c91714c9d3512c7c9bb6af5c167e9bea479de0df660a6b18f1b1ebb1e239b47f354bc06e6bba46c5d52a9cd029c6b4540826973428f1a4fd2443b1c07364933
+
+{
+      "code": "SHOP-1122",
+      "userId": 2,
+      "shopId": "65cc12b68ea7a6adaf34027c",
+      "products": [{
+            "productId": "65d00fe79e18b9de29fe42f4",
+            "quantity": 5,
+            "price": 120000
+      }]
+}

@@ -3,7 +3,7 @@
 const shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const crypto = require("node:crypto");
-const { createTokenPair, verifyJWT } = require("../utils/authUtils");
+const { createTokenPair } = require("../utils/authUtils");
 const KeyTokenService = require("./keyToken.service");
 const { getDataByFields } = require("../utils");
 const {
@@ -24,53 +24,34 @@ class AccessService {
   // Khi access token hết hạn, người dùng sẽ sử dụng refreshToken để lấy lại cặp AT, RT mới
   // thông qua hàm refreshTokenHandler
 
-  static refreshTokenHandler = async (refreshToken) => {
+  static refreshTokenHandler = async ({ refreshToken, user, keyStore }) => {
+    const { userId, email } = user;
+
     // 1 - Check refreshToken đã được sử dụng trước đó hay chưa?
-    const foundKeyToken = await KeyTokenService.findKeyTokenByUsedRefreshToken(
-      refreshToken
-    );
-
-    // 2 - Nếu refreshToken đã được sử dụng trước đó rồi thì ta đưa user vào danh sách ghi vấn
-    if (foundKeyToken) {
-      // Decode refreshToken để kiểm tra user là ai?
-      const { userId, email } = await verifyJWT(
-        refreshToken,
-        foundKeyToken.privateKey
-      );
-
-      // Xóa luôn Key Token document đó
+    // 2 - Nếu refreshToken đã được sử dụng trước đó rồi thì xóa keyToken
+    if (keyStore.usedRefreshTokens.includes(refreshToken)) {
       await KeyTokenService.removeKeyTokenByUserId(userId);
       throw new ForbiddenRequestError(
         "Error: Something went wrong. Please login again!"
       );
     }
 
-    // 3 - Nếu refreshToken chưa từng được sử dụng trước đây
-    const existingKeyToken =
-      await KeyTokenService.findKeyTokenByCurrentRefreshToken(refreshToken);
-
-    if (!existingKeyToken) {
+    if (keyStore.refreshToken !== refreshToken)
       throw new UnauthorizedRequestError("Error: Shop has not been registered");
-    }
 
-    // 4 - Verify refreshToken
-    const { userId, email } = await verifyJWT(
-      refreshToken,
-      existingKeyToken.privateKey
-    );
     const existingShop = await ShopService.findShopByEmail({ email });
-
     if (!existingShop) {
       throw new UnauthorizedRequestError("Error: Shop has not been registered");
     }
 
-    // 5 - Cấp Token mới, lưu token mới vao DB và đưa refreshToken cũ vào ds token đã sử dụng
+    // 3 - Nếu refreshToken chưa từng được sử dụng trước đây
+    // Cấp Token mới, lưu token mới vào DB và đưa refreshToken cũ vào ds token đã sử dụng
     const tokens = await createTokenPair(
       { userId, email },
-      existingKeyToken.publicKey,
-      existingKeyToken.privateKey
+      keyStore.publicKey,
+      keyStore.privateKey
     );
-    await existingKeyToken.updateOne({
+    await keyStore.updateOne({
       $set: {
         refreshToken: tokens.refreshToken,
         accessToken: tokens.accessToken,
