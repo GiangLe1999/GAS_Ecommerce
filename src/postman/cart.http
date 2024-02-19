@@ -9,11 +9,11 @@ x-api-key: 5c91714c9d3512c7c9bb6af5c167e9bea479de0df660a6b18f1b1ebb1e239b47f354b
 {
       "userId": 11,
       "product": {
-        "productId": "65d00fe79e18b9de29fe42f4",
-        "shopId": "65cc12b68ea7a6adaf34027c",
-        "quantity": 4,
-        "name": "New School",
-        "price": 113
+        "productId": "65d1cab5587cf5cdaf973a0c",
+        "shopId": "65d1ca05587cf5cdaf9739ff",
+        "quantity": 3,
+        "name": "New School 345",
+        "price": 300000
       }
 }
 
@@ -29,11 +29,24 @@ x-api-key: 5c91714c9d3512c7c9bb6af5c167e9bea479de0df660a6b18f1b1ebb1e239b47f354b
             "shopId": "65cc12b68ea7a6adaf34027c",
             "product_items": [
                 {
-                    "quantity": 2,
+                    "quantity": 1,
                     "productId": "65d00fe79e18b9de29fe42f4",
                     "shopId": "65cc12b68ea7a6adaf34027c",
-                    "old_quantity": 1,
-                    "price": 124
+                    "old_quantity": 0,
+                    "price": 300000
+                }
+            ],
+            "version": 2000
+        },
+          {
+            "shopId": "65d1ca05587cf5cdaf9739ff",
+            "product_items": [
+                {
+                    "quantity": 1,
+                    "productId": "65d1cab5587cf5cdaf973a0c",
+                    "shopId": "65d1ca05587cf5cdaf9739ff",
+                    "old_quantity": 0,
+                    "price": 400000
                 }
             ],
             "version": 2000

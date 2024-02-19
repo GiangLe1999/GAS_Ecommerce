@@ -34,6 +34,15 @@ class CartService {
       return await existingUserCart.save();
     }
 
+    if (
+      !existingUserCart.cart_products.some(
+        (p) => p.productId === product.productId
+      )
+    ) {
+      existingUserCart.cart_products.push(product);
+      return await existingUserCart.save();
+    }
+
     // Nếu cart đã tồn tại, Product có sẵn trong cart, thì update quantity của product
     return await updateCartItemQuantity({ userId, product });
   }
