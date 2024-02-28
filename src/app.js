@@ -12,6 +12,11 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Test pub/sub Redis
+// require("./test/inventory.test");
+// const productTest = require("./test/product.test");
+// productTest.purchaseProduct("product:001", 10);
+
 // Init DB
 require("./dbs/init.mongodb");
 // const { checkOverload } = require("./helpers/check.connect");
